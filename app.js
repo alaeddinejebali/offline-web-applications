@@ -1,4 +1,4 @@
-var http = require('http');
+ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var ext = /[\w\d_-]+\.[\w\d]+$/;
@@ -10,15 +10,17 @@ http.createServer(function(req, res){
     } else if (ext.test(req.url)) {
         fs.exists(path.join(__dirname, req.url), function (exists) {
             if (exists) {
-	        console.log("Loading index.html");
+                console.log("Loading index.html");
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 fs.createReadStream('index.html').pipe(res);
             } else {
                 //res.writeHead(404, {'Content-Type': 'text/html'});
                 //fs.createReadStream('404.html').pipe(res);
-        	console.log("Problem founding index.html");
+                console.log("Problem founding index.html");
+			}
         });
     } else {
         //  add a RESTful service
     }
 }).listen(8000);
+
