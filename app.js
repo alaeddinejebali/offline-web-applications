@@ -1,13 +1,24 @@
-var http = require('http'),
-    fs = require('fs');
+var http = require('http');
+var fs = require('fs');
+var path = require('path');
+var ext = /[\w\d_-]+\.[\w\d]+$/;
 
-fs.readFile('./index.html', function (err, html) {
-    if (err) {
-        throw err; 
-    }       
-    http.createServer(function(request, response) {  
-        response.writeHeader(200, {"Content-Type": "text/html"});  
-        response.write(html);  
-        response.end();  
-    }).listen(8000);
-});
+http.createServer(function(req, res){
+    if (req.url === '/') {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        fs.createReadStream('index.html').pipe(res);
+    } else if (ext.test(req.url)) {
+        fs.exists(path.join(__dirname, req.url), function (exists) {
+            if (exists) {
+	        console.log("Loading index.html");
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                fs.createReadStream('index.html').pipe(res);
+            } else {
+                //res.writeHead(404, {'Content-Type': 'text/html'});
+                //fs.createReadStream('404.html').pipe(res);
+        	console.log("Problem founding index.html");
+        });
+    } else {
+        //  add a RESTful service
+    }
+}).listen(8000);
